@@ -1,0 +1,1621 @@
+{
+  "name": "autoland docshell xpcshell manifest history, pass then mixed then fail",
+  "source": {
+    "repo": "autoland",
+    "endpoint": "/api/project/autoland/push/group_results/?revision=<rev>",
+    "manifests": [
+      "docshell/test/unit/xpcshell.toml",
+      "dom/promise/tests/chrome.toml"
+    ],
+    "note": "Trimmed real Treeherder data: only tasks touching the listed manifests are retained."
+  },
+  "manifest": "docshell/test/unit/xpcshell.toml",
+  "pushes": [
+    {
+      "push": {
+        "id": 2031655,
+        "revision": "c3c43ad523264e3725034a29a48636c4daa1e409",
+        "push_timestamp": 1789057083
+      },
+      "jobs": [
+        {
+          "id": 591838384,
+          "job_type_name": "test-linux2404-64/debug-xpcshell",
+          "job_type_symbol": "X-a9e12d852a7-bk",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "Nrl6TtHITy6RIu73_LYKFw"
+        }
+      ],
+      "group_results": {
+        "Nrl6TtHITy6RIu73_LYKFw": {
+          "docshell/test/unit/xpcshell.toml": true
+        }
+      }
+    },
+    {
+      "push": {
+        "id": 2031657,
+        "revision": "9561fa24fc2cd3cde6d3de46edc6f86a036fb6a1",
+        "push_timestamp": 1789057130
+      },
+      "jobs": [
+        {
+          "id": 591838385,
+          "job_type_name": "test-linux2404-64/debug-xpcshell",
+          "job_type_symbol": "X-a9e12d852a7-bk",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 26,
+          "task_id": "cszrDGS0R9Ck72GiaFFO8g"
+        }
+      ],
+      "group_results": {
+        "cszrDGS0R9Ck72GiaFFO8g": {
+          "docshell/test/unit/xpcshell.toml": true
+        }
+      }
+    },
+    {
+      "push": {
+        "id": 2031659,
+        "revision": "191d85d5dbd74bf6b0075884e1624deb84bd2923",
+        "push_timestamp": 1789057158
+      },
+      "jobs": [
+        {
+          "id": 591838386,
+          "job_type_name": "test-linux2404-64/debug-xpcshell",
+          "job_type_symbol": "X-a9e12d852a7-bk",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 26,
+          "task_id": "C8uBxMI6S2-kpd49cZK2YQ"
+        }
+      ],
+      "group_results": {
+        "C8uBxMI6S2-kpd49cZK2YQ": {
+          "docshell/test/unit/xpcshell.toml": true
+        }
+      }
+    },
+    {
+      "push": {
+        "id": 2031662,
+        "revision": "61160e0ee70228362cd0645a8936a4ba07985ec0",
+        "push_timestamp": 1789057198
+      },
+      "jobs": [
+        {
+          "id": 591808586,
+          "job_type_name": "test-macosx1500-aarch64-vms/opt-mochitest-chrome-1proc-2",
+          "job_type_symbol": "c2",
+          "platform": "macosx1500-aarch64-vms",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 15,
+          "task_id": "V_A0_ZVZTw2UHPnwXqda6w"
+        },
+        {
+          "id": 591808670,
+          "job_type_name": "test-android-em-14-x86_64/debug-isolated-process-geckoview-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "debug-isolated-process",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 32,
+          "task_id": "bpQL1Tp6REyUWOFjG-qppw"
+        },
+        {
+          "id": 591808719,
+          "job_type_name": "test-macosx1500-aarch64/opt-mochitest-chrome-1proc",
+          "job_type_symbol": "c",
+          "platform": "macosx1500-aarch64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 27,
+          "task_id": "OL55lXnyRLaEeGsA6VzLxQ"
+        },
+        {
+          "id": 591808749,
+          "job_type_name": "test-android-em-14-x86_64/debug-geckoview-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "ZmIHnfJ7Q7KL9jZiHNfIJg"
+        },
+        {
+          "id": 591808777,
+          "job_type_name": "test-linux2404-64-asan/opt-mochitest-chrome-1proc-2",
+          "job_type_symbol": "c2",
+          "platform": "linux2404-64-asan",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 22,
+          "task_id": "CbzcJN9XRECrh8yIA9C_DQ"
+        },
+        {
+          "id": 591808811,
+          "job_type_name": "test-android-em-14-x86_64/debug-geckoview-xpcshell-nofis-2",
+          "job_type_symbol": "X2",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 23,
+          "task_id": "dZj_VF_kSl-hWOrTUsCDpQ"
+        },
+        {
+          "id": 591808857,
+          "job_type_name": "test-linux2404-64-asan/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64-asan",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 27,
+          "task_id": "Dlta8UvCQKOxUfyLzmuYXw"
+        },
+        {
+          "id": 591809041,
+          "job_type_name": "test-macosx1500-aarch64/opt-mochitest-chrome-no-nv",
+          "job_type_symbol": "c",
+          "platform": "macosx1500-aarch64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 27,
+          "task_id": "LYHQwQcZTS--okzw7_npDw"
+        },
+        {
+          "id": 591809114,
+          "job_type_name": "test-windows11-64-25h2/debug-mochitest-chrome-standalone-2",
+          "job_type_symbol": "c2",
+          "platform": "windows11-64-25h2",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 19,
+          "task_id": "IMysXUNgSiiRurrQ8VpApQ"
+        },
+        {
+          "id": 591809220,
+          "job_type_name": "test-windows11-64-25h2-asan/opt-mochitest-chrome-1proc-2",
+          "job_type_symbol": "c2",
+          "platform": "windows11-64-25h2",
+          "platform_option": "asan",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 23,
+          "task_id": "PjqZ4jxhRpGZ4ZK5T9Wr6A"
+        },
+        {
+          "id": 591809229,
+          "job_type_name": "test-linux2404-64/debug-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 22,
+          "task_id": "KaUI57jcShiwR6GIPwrbdA"
+        },
+        {
+          "id": 591809659,
+          "job_type_name": "test-linux2404-64/opt-mochitest-chrome-1proc",
+          "job_type_symbol": "c",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 22,
+          "task_id": "LPuMZMgXQpCVOSpLWg60cA"
+        },
+        {
+          "id": 591809745,
+          "job_type_name": "test-linux2404-64/opt-mochitest-chrome-no-nv",
+          "job_type_symbol": "c",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "retry",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 8,
+          "task_id": "cq722_SrRzSEdt_Zlw_Sfg"
+        },
+        {
+          "id": 591809873,
+          "job_type_name": "test-macosx1015-64-qr/debug-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "macosx1015-64-qr",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 32,
+          "task_id": "aCELju_gR5Wx3Ct-biBtcw"
+        },
+        {
+          "id": 591809919,
+          "job_type_name": "test-windows11-64-25h2/opt-mochitest-chrome-no-nv-1",
+          "job_type_symbol": "c1",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 18,
+          "task_id": "KPCMIHI0TTK8EgzXuQrXxA"
+        },
+        {
+          "id": 591810024,
+          "job_type_name": "test-linux2404-64/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 16,
+          "task_id": "CERNrD2SRCat4VlQ9pNzMw"
+        },
+        {
+          "id": 591810112,
+          "job_type_name": "test-linux2404-64/opt-mochitest-chrome-standalone-2",
+          "job_type_symbol": "c2",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 24,
+          "task_id": "emixoO2JRYeMFuG28MBhfQ"
+        },
+        {
+          "id": 591810175,
+          "job_type_name": "test-windows11-32-25h2/debug-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "windows11-32-25h2",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 27,
+          "task_id": "HvdAFxwUSb2p3NMrt8i6pw"
+        },
+        {
+          "id": 591810255,
+          "job_type_name": "test-windows11-64-25h2/debug-mochitest-chrome-1proc-3",
+          "job_type_symbol": "c3",
+          "platform": "windows11-64-25h2",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 28,
+          "task_id": "YuVDiBPUQAC5Fix3ZrkHtA"
+        },
+        {
+          "id": 591810265,
+          "job_type_name": "test-windows10-64-2009-qr/debug-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 28,
+          "task_id": "YYSrie_eSGKuMj3_maVctA"
+        },
+        {
+          "id": 591810365,
+          "job_type_name": "test-android-em-14-x86_64/opt-geckoview-xpcshell-1",
+          "job_type_symbol": "X1",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "c9a2gPBvQSmoB8zrm6qYBg"
+        },
+        {
+          "id": 591810421,
+          "job_type_name": "test-linux2404-64-tsan/opt-mochitest-chrome-1proc-4",
+          "job_type_symbol": "c4",
+          "platform": "linux2404-64-tsan",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 19,
+          "task_id": "Yp5QFZGvQ7eQDE1ldxc01A"
+        },
+        {
+          "id": 591810592,
+          "job_type_name": "test-windows11-64-25h2/opt-mochitest-chrome-standalone-2",
+          "job_type_symbol": "c2",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "bCWTkCHHT5uH0JNzLWOO6g"
+        },
+        {
+          "id": 591810703,
+          "job_type_name": "test-linux2404-64/debug-mochitest-chrome-standalone-6",
+          "job_type_symbol": "c6",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 23,
+          "task_id": "F7wy-NAdTziC9V6Y7BpoPw"
+        },
+        {
+          "id": 591810811,
+          "job_type_name": "test-windows11-32-25h2/opt-mochitest-chrome-1proc-2",
+          "job_type_symbol": "c2",
+          "platform": "windows11-32-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 21,
+          "task_id": "FUZf7y1oTk6dS5wwijMpHw"
+        },
+        {
+          "id": 591810829,
+          "job_type_name": "test-linux2404-64/debug-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 21,
+          "task_id": "S_7yK5T5RCeCJrbfBSAOAQ"
+        },
+        {
+          "id": 591810855,
+          "job_type_name": "test-windows11-64-25h2/opt-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 19,
+          "task_id": "FLktbyP2Sc641IvAeF6wFA"
+        },
+        {
+          "id": 591810913,
+          "job_type_name": "test-linux2404-64-tsan/opt-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "linux2404-64-tsan",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 27,
+          "task_id": "d4LtrlW5TseFUVFVkgS1Eg"
+        },
+        {
+          "id": 591810945,
+          "job_type_name": "test-windows10-64-2009-qr/opt-mochitest-chrome-1proc-2",
+          "job_type_symbol": "c2",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "dNPdyeQITo6D6YTnbYK90Q"
+        },
+        {
+          "id": 591811011,
+          "job_type_name": "test-linux2404-64/debug-mochitest-chrome-swr-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 21,
+          "task_id": "FBgylOa8SbChgCXAFdCKgg"
+        },
+        {
+          "id": 591811157,
+          "job_type_name": "test-macosx1500-aarch64/debug-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "macosx1500-aarch64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 19,
+          "task_id": "M3TfHxiSTe-i6QwZdQ3AiA"
+        },
+        {
+          "id": 591811166,
+          "job_type_name": "test-android-em-14-x86_64/opt-geckoview-xpcshell-nofis-1",
+          "job_type_symbol": "X1",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 23,
+          "task_id": "XX6tN2DMTM2oEaCiA2y0HA"
+        },
+        {
+          "id": 591811310,
+          "job_type_name": "test-macosx1015-64-qr/opt-xpcshell-1",
+          "job_type_symbol": "X1",
+          "platform": "macosx1015-64-qr",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 17,
+          "task_id": "VXNjk-EGQiemdf3xC6to1w"
+        },
+        {
+          "id": 591811320,
+          "job_type_name": "test-android-em-14-x86_64-lite/opt-geckoview-xpcshell-1",
+          "job_type_symbol": "X1",
+          "platform": "android-em-14-x86_64-lite",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "AdGjxzNPSlCcelQ0bF5MdQ"
+        },
+        {
+          "id": 591811342,
+          "job_type_name": "test-android-em-14-x86_64-lite/opt-geckoview-xpcshell-nofis-2",
+          "job_type_symbol": "X2",
+          "platform": "android-em-14-x86_64-lite",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 24,
+          "task_id": "AixljAZ1QgCKVzHPf7qPtg"
+        },
+        {
+          "id": 591811547,
+          "job_type_name": "test-windows10-64-2009-qr/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 30,
+          "task_id": "B65Y4nKJQX2_6KOu0j7CTw"
+        },
+        {
+          "id": 591811549,
+          "job_type_name": "test-windows11-32-25h2/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "windows11-32-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 17,
+          "task_id": "AeGHkfaESjmdcdMcTv40WA"
+        },
+        {
+          "id": 591811595,
+          "job_type_name": "test-windows11-64-25h2-shippable/opt-mochitest-chrome-no-nv-1",
+          "job_type_symbol": "c1",
+          "platform": "windows11-64-25h2-shippable",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "Bpz_WPUJTFyQetfEhbr6PQ"
+        },
+        {
+          "id": 591811651,
+          "job_type_name": "test-macosx1500-aarch64/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "macosx1500-aarch64",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 27,
+          "task_id": "OMgLtKuSQ2CRZP9fAPFOHQ"
+        },
+        {
+          "id": 591811696,
+          "job_type_name": "test-windows10-64-2009-qr/debug-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 30,
+          "task_id": "MwfGImolSYGKN9JdtRE0UA"
+        },
+        {
+          "id": 591811717,
+          "job_type_name": "test-windows11-64-25h2/debug-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "windows11-64-25h2",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 26,
+          "task_id": "U3xAUUegTN6BhxvOWhBePQ"
+        },
+        {
+          "id": 591811752,
+          "job_type_name": "test-macosx1500-aarch64-vms/opt-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "macosx1500-aarch64-vms",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 27,
+          "task_id": "apFz8iy9QBWwBQriOIvf_A"
+        },
+        {
+          "id": 591811765,
+          "job_type_name": "test-windows11-32-25h2/debug-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "windows11-32-25h2",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "A0-sHxdqRjeMIb8dXaMaAg"
+        },
+        {
+          "id": 591811857,
+          "job_type_name": "test-windows11-64-25h2/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 17,
+          "task_id": "N4KrULXqSZyYHiWRQfCQiA"
+        },
+        {
+          "id": 591812017,
+          "job_type_name": "test-macosx1500-aarch64/debug-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "macosx1500-aarch64",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 35,
+          "task_id": "AkeAJRAZQRSomDn1-1Qf2g"
+        },
+        {
+          "id": 591812081,
+          "job_type_name": "test-macosx1500-aarch64-vms/debug-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "macosx1500-aarch64-vms",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 21,
+          "task_id": "aqoOSgs-Rx-CBzMo2bmhMQ"
+        },
+        {
+          "id": 591812191,
+          "job_type_name": "test-linux2404-64-shippable/opt-mochitest-chrome-no-nv",
+          "job_type_symbol": "c",
+          "platform": "linux2404-64-shippable",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 19,
+          "task_id": "WBISZP7OR3CjI_rU9Wm8OA"
+        },
+        {
+          "id": 591812336,
+          "job_type_name": "test-windows11-64-25h2/opt-xpcshell-msix",
+          "job_type_symbol": "X",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 11,
+          "task_id": "dpNa_upNSyOxo1dOP0Pa5w"
+        },
+        {
+          "id": 591812447,
+          "job_type_name": "test-macosx1500-aarch64-shippable/opt-mochitest-chrome-no-nv",
+          "job_type_symbol": "c",
+          "platform": "macosx1500-aarch64-shippable",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 26,
+          "task_id": "R4xkXIIrQKKpXtNH0uLc1Q"
+        },
+        {
+          "id": 591812482,
+          "job_type_name": "test-windows11-64-25h2/debug-xpcshell-msix",
+          "job_type_symbol": "X",
+          "platform": "windows11-64-25h2",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 18,
+          "task_id": "BC0cueL9S-miexxV-8e9rg"
+        },
+        {
+          "id": 591834217,
+          "job_type_name": "test-linux2404-64/opt-mochitest-chrome-no-nv",
+          "job_type_symbol": "c",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 22,
+          "task_id": "cq722_SrRzSEdt_Zlw_Sfg"
+        },
+        {
+          "id": 591838387,
+          "job_type_name": "test-linux2404-64/debug-xpcshell",
+          "job_type_symbol": "X-a9e12d852a7-bk",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "DB9C8ykTShCH6wJ-r3UsnA"
+        }
+      ],
+      "group_results": {
+        "HvdAFxwUSb2p3NMrt8i6pw": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "YuVDiBPUQAC5Fix3ZrkHtA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "YYSrie_eSGKuMj3_maVctA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "c9a2gPBvQSmoB8zrm6qYBg": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "Yp5QFZGvQ7eQDE1ldxc01A": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "bCWTkCHHT5uH0JNzLWOO6g": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "F7wy-NAdTziC9V6Y7BpoPw": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "FUZf7y1oTk6dS5wwijMpHw": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "S_7yK5T5RCeCJrbfBSAOAQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "FLktbyP2Sc641IvAeF6wFA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "d4LtrlW5TseFUVFVkgS1Eg": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "dNPdyeQITo6D6YTnbYK90Q": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "FBgylOa8SbChgCXAFdCKgg": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "M3TfHxiSTe-i6QwZdQ3AiA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "XX6tN2DMTM2oEaCiA2y0HA": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "VXNjk-EGQiemdf3xC6to1w": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "AdGjxzNPSlCcelQ0bF5MdQ": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "AixljAZ1QgCKVzHPf7qPtg": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "B65Y4nKJQX2_6KOu0j7CTw": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "AeGHkfaESjmdcdMcTv40WA": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "Bpz_WPUJTFyQetfEhbr6PQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "OMgLtKuSQ2CRZP9fAPFOHQ": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "MwfGImolSYGKN9JdtRE0UA": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "U3xAUUegTN6BhxvOWhBePQ": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "apFz8iy9QBWwBQriOIvf_A": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "A0-sHxdqRjeMIb8dXaMaAg": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "V_A0_ZVZTw2UHPnwXqda6w": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "N4KrULXqSZyYHiWRQfCQiA": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "bpQL1Tp6REyUWOFjG-qppw": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "OL55lXnyRLaEeGsA6VzLxQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "ZmIHnfJ7Q7KL9jZiHNfIJg": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "CbzcJN9XRECrh8yIA9C_DQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "AkeAJRAZQRSomDn1-1Qf2g": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "dZj_VF_kSl-hWOrTUsCDpQ": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "aqoOSgs-Rx-CBzMo2bmhMQ": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "Dlta8UvCQKOxUfyLzmuYXw": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "WBISZP7OR3CjI_rU9Wm8OA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "LYHQwQcZTS--okzw7_npDw": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "dpNa_upNSyOxo1dOP0Pa5w": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "IMysXUNgSiiRurrQ8VpApQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "PjqZ4jxhRpGZ4ZK5T9Wr6A": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "R4xkXIIrQKKpXtNH0uLc1Q": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "LPuMZMgXQpCVOSpLWg60cA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "aCELju_gR5Wx3Ct-biBtcw": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "KPCMIHI0TTK8EgzXuQrXxA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "emixoO2JRYeMFuG28MBhfQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "BC0cueL9S-miexxV-8e9rg": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "KaUI57jcShiwR6GIPwrbdA": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "DB9C8ykTShCH6wJ-r3UsnA": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "CERNrD2SRCat4VlQ9pNzMw": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "cq722_SrRzSEdt_Zlw_Sfg": {
+          "dom/promise/tests/chrome.toml": true
+        }
+      }
+    },
+    {
+      "push": {
+        "id": 2031678,
+        "revision": "a9e12d852a75f762f4136ef2926cacd7ef349c45",
+        "push_timestamp": 1789057921
+      },
+      "jobs": [
+        {
+          "id": 591826320,
+          "job_type_name": "test-windows10-64-2009-qr/opt-mochitest-chrome-1proc-2",
+          "job_type_symbol": "c2",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 27,
+          "task_id": "Vhr2PnU5SFCdM93Ik2Nqyw"
+        },
+        {
+          "id": 591826358,
+          "job_type_name": "test-linux2404-64-tsan/opt-mochitest-chrome-1proc-4",
+          "job_type_symbol": "c4",
+          "platform": "linux2404-64-tsan",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 20,
+          "task_id": "KEb6J6NUTFekRqR6HbYhmA"
+        },
+        {
+          "id": 591826372,
+          "job_type_name": "test-macosx1015-64-qr/opt-xpcshell-1",
+          "job_type_symbol": "X1",
+          "platform": "macosx1015-64-qr",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 22,
+          "task_id": "PtE-8XSoQ0OSfI_x6ABtBQ"
+        },
+        {
+          "id": 591826379,
+          "job_type_name": "test-windows11-64-25h2/opt-mochitest-chrome-no-nv-1",
+          "job_type_symbol": "c1",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 19,
+          "task_id": "UT62g17rQjK53ZtrMBW6RQ"
+        },
+        {
+          "id": 591826412,
+          "job_type_name": "test-linux2404-64/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 3,
+          "duration": 15,
+          "task_id": "Uzshrg_kTRWaJMwHB8CUdg"
+        },
+        {
+          "id": 591826414,
+          "job_type_name": "test-linux2404-64/debug-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 3,
+          "duration": 26,
+          "task_id": "D4fYHaRcReizRP5Z3bU7oA"
+        },
+        {
+          "id": 591826446,
+          "job_type_name": "test-macosx1500-aarch64/debug-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "macosx1500-aarch64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 14,
+          "task_id": "WeydFGPsSsWybjtDX9hxXQ"
+        },
+        {
+          "id": 591826544,
+          "job_type_name": "test-windows11-32-25h2/debug-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "windows11-32-25h2",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 28,
+          "task_id": "dw8dWP0KRPCCzUfg7Um9Hw"
+        },
+        {
+          "id": 591826546,
+          "job_type_name": "test-linux2404-64/debug-mochitest-chrome-swr-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 20,
+          "task_id": "W_6hS2S2TeWqcs0aM1d3UA"
+        },
+        {
+          "id": 591826591,
+          "job_type_name": "test-linux2404-64-tsan/opt-xpcshell-1",
+          "job_type_symbol": "X1",
+          "platform": "linux2404-64-tsan",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 25,
+          "task_id": "HEEuEUEhSpeBDyzyA2KDHA"
+        },
+        {
+          "id": 591826605,
+          "job_type_name": "test-linux2404-64/opt-mochitest-chrome-no-nv",
+          "job_type_symbol": "c",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 20,
+          "task_id": "B--9cUTHTAKNdJMI5qCZNA"
+        },
+        {
+          "id": 591826623,
+          "job_type_name": "test-linux2404-64/debug-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 23,
+          "task_id": "cCUqCrM2S9eK5dc5k5SE8A"
+        },
+        {
+          "id": 591826636,
+          "job_type_name": "test-linux2404-64-asan/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64-asan",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 26,
+          "task_id": "fdCGX8ZBQ9Gy2VG9ZdwWtQ"
+        },
+        {
+          "id": 591826687,
+          "job_type_name": "test-linux2404-64/opt-mochitest-chrome-1proc",
+          "job_type_symbol": "c",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 21,
+          "task_id": "eRXdyA5aS7CJT2HU5m_TOA"
+        },
+        {
+          "id": 591826746,
+          "job_type_name": "test-android-em-14-x86_64/opt-geckoview-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "PIOTCmm7Q8SJaZPvcVXSlQ"
+        },
+        {
+          "id": 591826770,
+          "job_type_name": "test-android-em-14-x86_64/debug-isolated-process-geckoview-xpcshell-3",
+          "job_type_symbol": "X3",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "debug-isolated-process",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 21,
+          "task_id": "YYzAeQvfT8q9PxfgsorE3A"
+        },
+        {
+          "id": 591826787,
+          "job_type_name": "test-windows10-64-2009-qr/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 28,
+          "task_id": "bX4-dhrHTsq0_Te6k_kN6w"
+        },
+        {
+          "id": 591826792,
+          "job_type_name": "test-macosx1500-aarch64-vms/opt-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "macosx1500-aarch64-vms",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 30,
+          "task_id": "V3ZWFVR7RfCYWggeoE0j-Q"
+        },
+        {
+          "id": 591826794,
+          "job_type_name": "test-macosx1500-aarch64-vms/debug-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "macosx1500-aarch64-vms",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 25,
+          "task_id": "EhwZ7YoyS1m5g5ySnwgH3w"
+        },
+        {
+          "id": 591826803,
+          "job_type_name": "test-android-em-14-x86_64/opt-geckoview-xpcshell-nofis-1",
+          "job_type_symbol": "X1",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 22,
+          "task_id": "CjTqOkYZRZqBXu0wSwkHbg"
+        },
+        {
+          "id": 591826806,
+          "job_type_name": "test-windows11-64-25h2/opt-xpcshell-msix",
+          "job_type_symbol": "X",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 12,
+          "task_id": "ECZ_u08XQV2A7pcDc7PBAQ"
+        },
+        {
+          "id": 591826817,
+          "job_type_name": "test-windows11-64-25h2/debug-xpcshell-msix",
+          "job_type_symbol": "X",
+          "platform": "windows11-64-25h2",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 17,
+          "task_id": "M3K_c1ESQXGTPuZu8bBUCQ"
+        },
+        {
+          "id": 591837535,
+          "job_type_name": "test-linux2404-64/debug-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 24,
+          "task_id": "TajK4mBvQAmj-0hvKTh9VA"
+        },
+        {
+          "id": 591838324,
+          "job_type_name": "test-linux2404-64/debug-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 24,
+          "task_id": "c2X73il3QiSKVxzWz1NEfg"
+        }
+      ],
+      "group_results": {
+        "cCUqCrM2S9eK5dc5k5SE8A": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "fdCGX8ZBQ9Gy2VG9ZdwWtQ": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "eRXdyA5aS7CJT2HU5m_TOA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "PIOTCmm7Q8SJaZPvcVXSlQ": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "YYzAeQvfT8q9PxfgsorE3A": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "V3ZWFVR7RfCYWggeoE0j-Q": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "EhwZ7YoyS1m5g5ySnwgH3w": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "ECZ_u08XQV2A7pcDc7PBAQ": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "M3K_c1ESQXGTPuZu8bBUCQ": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "Vhr2PnU5SFCdM93Ik2Nqyw": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "KEb6J6NUTFekRqR6HbYhmA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "PtE-8XSoQ0OSfI_x6ABtBQ": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "UT62g17rQjK53ZtrMBW6RQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "Uzshrg_kTRWaJMwHB8CUdg": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "WeydFGPsSsWybjtDX9hxXQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "dw8dWP0KRPCCzUfg7Um9Hw": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "W_6hS2S2TeWqcs0aM1d3UA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "B--9cUTHTAKNdJMI5qCZNA": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "D4fYHaRcReizRP5Z3bU7oA": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "TajK4mBvQAmj-0hvKTh9VA": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "bX4-dhrHTsq0_Te6k_kN6w": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "HEEuEUEhSpeBDyzyA2KDHA": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "c2X73il3QiSKVxzWz1NEfg": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "CjTqOkYZRZqBXu0wSwkHbg": {
+          "docshell/test/unit/xpcshell.toml": true
+        }
+      }
+    },
+    {
+      "push": {
+        "id": 2032719,
+        "revision": "896d50164f217d2983b834fafa9c97b94ed7d193",
+        "push_timestamp": 1789113212
+      },
+      "jobs": [],
+      "group_results": {}
+    },
+    {
+      "push": {
+        "id": 2032720,
+        "revision": "f9baddcc4cdcc68bd85ce652b6fba1cab284ef1e",
+        "push_timestamp": 1789113246
+      },
+      "jobs": [
+        {
+          "id": 591979629,
+          "job_type_name": "test-macosx1015-64-qr/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "macosx1015-64-qr",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 48,
+          "task_id": "bT77SfG9RpCvhUehgJJpRA"
+        },
+        {
+          "id": 591979641,
+          "job_type_name": "test-linux2404-64/opt-mochitest-chrome-1proc",
+          "job_type_symbol": "c",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "retry",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 14,
+          "task_id": "R1bXx86NQEKyq3zYlGnWlQ"
+        },
+        {
+          "id": 591979672,
+          "job_type_name": "test-macosx1015-64-qr/debug-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "macosx1015-64-qr",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 30,
+          "task_id": "AOZxVg8rTviGbkBc8JS1bg"
+        },
+        {
+          "id": 591979700,
+          "job_type_name": "test-linux2404-64/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 3,
+          "duration": 18,
+          "task_id": "R-Cw1My-ToOzjkAm3_aKLQ"
+        },
+        {
+          "id": 591979748,
+          "job_type_name": "test-linux2404-64-tsan/opt-mochitest-chrome-1proc-3",
+          "job_type_symbol": "c3",
+          "platform": "linux2404-64-tsan",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 22,
+          "task_id": "Ky2rYG39Te2RP0TfDlMhEQ"
+        },
+        {
+          "id": 591979781,
+          "job_type_name": "test-windows11-64-25h2-asan/opt-mochitest-chrome-1proc-2",
+          "job_type_symbol": "c2",
+          "platform": "windows11-64-25h2",
+          "platform_option": "asan",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 26,
+          "task_id": "CF_QlJKbTDeRJatTBGE9Ug"
+        },
+        {
+          "id": 591979787,
+          "job_type_name": "test-windows10-64-2009-qr/opt-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 23,
+          "task_id": "OlA4SNslS6K3wLDYsFsBYw"
+        },
+        {
+          "id": 591979845,
+          "job_type_name": "test-android-em-14-x86_64/debug-geckoview-xpcshell-nofis-3",
+          "job_type_symbol": "X3",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 21,
+          "task_id": "MSzI9GZFRQqH9ZqjRAXHPg"
+        },
+        {
+          "id": 591979870,
+          "job_type_name": "test-windows10-64-2009-qr/debug-mochitest-chrome-1proc-3",
+          "job_type_symbol": "c3",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "debug",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 25,
+          "task_id": "NGGi8AsET6i8iAEUVM0esw"
+        },
+        {
+          "id": 591979905,
+          "job_type_name": "test-linux2404-64-asan/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64-asan",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 28,
+          "task_id": "KSb5cULARuOEgPUJxd80VA"
+        },
+        {
+          "id": 591979925,
+          "job_type_name": "test-android-em-14-x86_64-lite/opt-geckoview-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "android-em-14-x86_64-lite",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 28,
+          "task_id": "UgX9zHLsRcyHgauyB4DjTA"
+        },
+        {
+          "id": 591979976,
+          "job_type_name": "test-android-em-14-x86_64/debug-isolated-process-geckoview-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "debug-isolated-process",
+          "result": "retry",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 15,
+          "task_id": "b2Ah9d8rSySV5IxG_YbkZg"
+        },
+        {
+          "id": 591979985,
+          "job_type_name": "test-macosx1500-aarch64-vms/opt-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "macosx1500-aarch64-vms",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 16,
+          "task_id": "WbBkNoiQR7G_uubtT1nNzg"
+        },
+        {
+          "id": 591979986,
+          "job_type_name": "test-windows11-64-25h2/opt-mochitest-chrome-1proc-1",
+          "job_type_symbol": "c1",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 20,
+          "task_id": "V-Wzv3OuS7qe_l2cnKb0gg"
+        },
+        {
+          "id": 591979990,
+          "job_type_name": "test-macosx1500-aarch64/opt-mochitest-chrome-1proc",
+          "job_type_symbol": "c",
+          "platform": "macosx1500-aarch64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 26,
+          "task_id": "IJy6yLfIRvOzWUXI3zw7Eg"
+        },
+        {
+          "id": 591980054,
+          "job_type_name": "test-windows10-64-2009-qr/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "windows10-64-2009-qr",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 30,
+          "task_id": "fljzwPZoS_Gj14_ztOpa7Q"
+        },
+        {
+          "id": 591980059,
+          "job_type_name": "test-windows11-32-25h2/debug-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "windows11-32-25h2",
+          "platform_option": "debug",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 26,
+          "task_id": "JgJ4fMrpRpSJcNQG5tiZYQ"
+        },
+        {
+          "id": 591980073,
+          "job_type_name": "test-macosx1500-aarch64/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "macosx1500-aarch64",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 25,
+          "task_id": "Y9tD5d4HQqmJUYmZX2ka9g"
+        },
+        {
+          "id": 591980083,
+          "job_type_name": "test-windows11-64-25h2/opt-xpcshell-msix",
+          "job_type_symbol": "X",
+          "platform": "windows11-64-25h2",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 11,
+          "task_id": "SyqP1LIOTY6Y5DugelRzDQ"
+        },
+        {
+          "id": 591986845,
+          "job_type_name": "test-android-em-14-x86_64/debug-isolated-process-geckoview-xpcshell-2",
+          "job_type_symbol": "X2",
+          "platform": "android-em-14-x86_64",
+          "platform_option": "debug-isolated-process",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 32,
+          "task_id": "b2Ah9d8rSySV5IxG_YbkZg"
+        },
+        {
+          "id": 591987262,
+          "job_type_name": "test-linux2404-64/opt-mochitest-chrome-1proc",
+          "job_type_symbol": "c",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "success",
+          "state": "completed",
+          "failure_classification_id": 1,
+          "duration": 20,
+          "task_id": "R1bXx86NQEKyq3zYlGnWlQ"
+        },
+        {
+          "id": 591987988,
+          "job_type_name": "test-linux2404-64/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 17,
+          "task_id": "LBnf0CSrSdO-unYKflZOQg"
+        },
+        {
+          "id": 591987989,
+          "job_type_name": "test-linux2404-64/opt-xpcshell",
+          "job_type_symbol": "X",
+          "platform": "linux2404-64",
+          "platform_option": "opt",
+          "result": "testfailed",
+          "state": "completed",
+          "failure_classification_id": 4,
+          "duration": 17,
+          "task_id": "Uds4UCj_QMOWYm_4pDirTg"
+        }
+      ],
+      "group_results": {
+        "OlA4SNslS6K3wLDYsFsBYw": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "MSzI9GZFRQqH9ZqjRAXHPg": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "R-Cw1My-ToOzjkAm3_aKLQ": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "NGGi8AsET6i8iAEUVM0esw": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "V-Wzv3OuS7qe_l2cnKb0gg": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "Ky2rYG39Te2RP0TfDlMhEQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "SyqP1LIOTY6Y5DugelRzDQ": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "LBnf0CSrSdO-unYKflZOQg": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "JgJ4fMrpRpSJcNQG5tiZYQ": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "UgX9zHLsRcyHgauyB4DjTA": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "R1bXx86NQEKyq3zYlGnWlQ": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "Uds4UCj_QMOWYm_4pDirTg": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "CF_QlJKbTDeRJatTBGE9Ug": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "AOZxVg8rTviGbkBc8JS1bg": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "fljzwPZoS_Gj14_ztOpa7Q": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "b2Ah9d8rSySV5IxG_YbkZg": {
+          "docshell/test/unit/xpcshell.toml": true
+        },
+        "WbBkNoiQR7G_uubtT1nNzg": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "KSb5cULARuOEgPUJxd80VA": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "bT77SfG9RpCvhUehgJJpRA": {
+          "docshell/test/unit/xpcshell.toml": false
+        },
+        "IJy6yLfIRvOzWUXI3zw7Eg": {
+          "dom/promise/tests/chrome.toml": true
+        },
+        "Y9tD5d4HQqmJUYmZX2ka9g": {
+          "docshell/test/unit/xpcshell.toml": false
+        }
+      }
+    }
+  ],
+  "expected": {
+    "last_passed_push_id": 2031662,
+    "first_failed_push_id": 2031678,
+    "predates_window": false,
+    "filtered": {
+      "filter": "linux2404-64/opt-xpcshell",
+      "last_passed_push_id": 2031662,
+      "first_failed_push_id": 2031678
+    }
+  }
+}

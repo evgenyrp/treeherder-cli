@@ -1,6 +1,7 @@
 mod api;
 mod cache;
 mod cli;
+mod history;
 mod models;
 mod output;
 mod range;
@@ -12,6 +13,7 @@ use cache::*;
 use clap::Parser;
 use cli::{Args, MatchFilter};
 use futures::stream::{self, StreamExt};
+use history::*;
 use indicatif::{ProgressBar, ProgressStyle};
 use models::*;
 use output::*;
@@ -54,24 +56,59 @@ INPUT: revision hash|Treeherder URL|Lando commit ID (numeric or URL with ?landoC
 --download-artifacts download job artifacts|--artifact-pattern <regex>
 --perf show performance/resource data
 --similar-history <job-id> job history via similar_jobs API|--similar-count <N> (default 50)
+--group-history <manifest> pass/fail of a test manifest per push before INPUT|--lookback <N> (default 50, max 300)
 --test <regex> restrict --suspects to matching test names
 --duration-min <N> only jobs longer than N seconds
 --context <N> show N pushes before and after this push (for bisecting autoland failures)
+Question -> flags:
+  did job X run on this push?            REV --filter X --match-filter all --json
+  did manifest M run / pass on this push? REV --group-history M --lookback 0
+  when did manifest M last pass?          REV --group-history M --lookback 150 [--filter X]
+  is this failure older than my window?   look for "failure predates window" in --suspects or --group-history
+  which pushes could have caused test T?  REV --lookback 20 --suspects --test T
+  is job X intermittent?                  --similar-history <job-id> (shows revision, date, classification name)
 Ex: treeherder-cli a13b9fc22101|treeherder-cli 12345 --stream-failures|treeherder-cli a13b9fc22101 --json
 Ex: treeherder-cli a13b9fc22101 --filter mochitest --platform linux|treeherder-cli a13b9fc22101 --compare b2c3d4e5
 Ex: treeherder-cli a13b9fc22101 --repo autoland --context 5
 Ex: treeherder-cli --repo autoland --range good..bad --suspects --json
+Ex: treeherder-cli f9baddcc4cdc --repo autoland --group-history docshell/test/unit/xpcshell.toml --lookback 150
 "#
     );
 }
 
+const MAX_GROUP_HISTORY_LOOKBACK: u64 = 300;
+const DEFAULT_GROUP_HISTORY_LOOKBACK: u64 = 50;
+
 fn has_range_request(args: &Args) -> bool {
-    args.range.is_some() || args.from.is_some() || args.to.is_some() || args.lookback.is_some()
+    args.group_history.is_none()
+        && (args.range.is_some()
+            || args.from.is_some()
+            || args.to.is_some()
+            || args.lookback.is_some())
 }
 
 fn validate_range_args(args: &Args) -> Result<()> {
     if args.test.is_some() && !args.suspects {
         anyhow::bail!("--test requires --suspects");
+    }
+    if args.group_history.is_some() {
+        if args.input.is_none() {
+            anyhow::bail!("--group-history requires INPUT as the ending revision");
+        }
+        if args.range.is_some() || args.from.is_some() || args.to.is_some() {
+            anyhow::bail!(
+                "--group-history takes its window from --lookback, not --range/--from/--to"
+            );
+        }
+        if args
+            .lookback
+            .is_some_and(|n| n > MAX_GROUP_HISTORY_LOOKBACK)
+        {
+            anyhow::bail!(
+                "--lookback for --group-history is capped at {}",
+                MAX_GROUP_HISTORY_LOOKBACK
+            );
+        }
     }
     if args.range.is_some() && (args.from.is_some() || args.to.is_some()) {
         anyhow::bail!("--range cannot be combined with --from or --to");
@@ -409,6 +446,77 @@ async fn run_range_mode(client: Client, repo: String, args: &Args, pb: ProgressB
     Ok(())
 }
 
+async fn run_group_history_mode(
+    client: Client,
+    repo: String,
+    manifest: &str,
+    args: &Args,
+    pb: ProgressBar,
+) -> Result<()> {
+    let selector = JobSelector::from_args(args)?;
+    let lookback = args.lookback.unwrap_or(DEFAULT_GROUP_HISTORY_LOOKBACK);
+
+    pb.set_message("Resolving push window");
+    let end_push = resolve_push_input(&client, &repo, args.input.as_ref().unwrap()).await?;
+    let pushes = if lookback == 0 {
+        vec![end_push]
+    } else {
+        fetch_push_window_ending_at(&client, &repo, &end_push, lookback).await?
+    };
+
+    let allowed_tasks: HashMap<u64, HashSet<String>> = if selector.has_name_filter() {
+        pb.set_message(format!("Fetching jobs for {} pushes", pushes.len()));
+        fetch_jobs_by_push(&client, &pushes)
+            .await?
+            .into_iter()
+            .map(|push_jobs| {
+                let tasks = push_jobs
+                    .jobs
+                    .iter()
+                    .filter(|job| selector.matches_name(job))
+                    .filter_map(|job| job.task_id.clone())
+                    .collect();
+                (push_jobs.push.id, tasks)
+            })
+            .collect()
+    } else {
+        HashMap::new()
+    };
+
+    pb.set_message(format!(
+        "Fetching group results for {} pushes",
+        pushes.len()
+    ));
+    let client = Arc::new(client);
+    let results: Vec<Result<PushGroupResults>> = stream::iter(pushes)
+        .map(|push| {
+            let client = Arc::clone(&client);
+            let repo = repo.clone();
+            let allowed = allowed_tasks.get(&push.id).cloned();
+            async move {
+                let results = fetch_group_results(&client, &repo, &push.revision).await?;
+                Ok(PushGroupResults {
+                    push,
+                    results,
+                    allowed_tasks: allowed,
+                })
+            }
+        })
+        .buffer_unordered(20)
+        .collect()
+        .await;
+    pb.finish_and_clear();
+
+    let history = build_group_history(manifest, results.into_iter().collect::<Result<Vec<_>>>()?);
+
+    if args.json {
+        println!("{}", format_group_history_json(&history)?);
+    } else {
+        println!("{}", format_group_history_markdown(&history));
+    }
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let version_checker =
@@ -437,6 +545,7 @@ async fn run() -> Result<()> {
     if !args.use_cache
         && args.input.is_none()
         && args.similar_history.is_none()
+        && args.group_history.is_none()
         && !has_range_request(&args)
     {
         anyhow::bail!(
@@ -586,6 +695,10 @@ async fn run() -> Result<()> {
         }
     }
     let repo = args.repo.clone().unwrap_or_else(|| "try".to_string());
+
+    if let Some(manifest) = &args.group_history {
+        return run_group_history_mode(client, repo, manifest, &args, pb).await;
+    }
 
     if has_range_request(&args) {
         return run_range_mode(client, repo, &args, pb).await;

@@ -63,6 +63,10 @@ pub fn format_range_suspects_json(result: &RangeAnalysisResult) -> Result<String
     Ok(serde_json::to_string_pretty(&output)?)
 }
 
+pub fn format_group_history_json(history: &GroupHistory) -> Result<String> {
+    Ok(serde_json::to_string_pretty(history)?)
+}
+
 pub fn format_perf_json(revision: &str, push_id: u64, perf_data: &[JobPerfData]) -> Result<String> {
     let output = serde_json::json!({
         "revision": revision,

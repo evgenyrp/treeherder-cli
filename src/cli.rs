@@ -103,7 +103,7 @@ pub struct Args {
     pub to: Option<String>,
     #[arg(
         long,
-        help = "Analyze N pushes before INPUT plus INPUT as an inclusive range"
+        help = "Analyze N pushes before INPUT plus INPUT as an inclusive range (default 50, max 300 with --group-history)"
     )]
     pub lookback: Option<u64>,
     #[arg(
@@ -116,6 +116,12 @@ pub struct Args {
         help = "Only report suspects whose test name matches this regex (requires --suspects)"
     )]
     pub test: Option<String>,
+    #[arg(
+        long,
+        value_name = "MANIFEST",
+        help = "Show pass/fail history of a test manifest (e.g. dom/tests/xpcshell.toml) across the pushes before INPUT"
+    )]
+    pub group_history: Option<String>,
     #[arg(long, help = "Download job artifacts")]
     pub download_artifacts: bool,
     #[arg(
