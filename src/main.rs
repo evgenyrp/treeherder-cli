@@ -19,7 +19,7 @@ use range::*;
 use regex::Regex;
 use reqwest::Client;
 use std::cmp::Reverse;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::Write;
 use std::path::PathBuf;
@@ -143,59 +143,104 @@ async fn resolve_range_pushes(client: &Client, repo: &str, args: &Args) -> Resul
     fetch_pushes_between(client, repo, start_push.id, end_push.id).await
 }
 
+/// Job filters shared by every mode: --filter, --platform, --duration-min, --include-intermittent.
+struct JobSelector {
+    filter: Option<Regex>,
+    platform: Option<Regex>,
+    duration_min: Option<u64>,
+    include_intermittent: bool,
+}
+
+impl JobSelector {
+    fn from_args(args: &Args) -> Result<Self> {
+        Ok(Self {
+            filter: args.filter.as_deref().map(Regex::new).transpose()?,
+            platform: args.platform.as_deref().map(Regex::new).transpose()?,
+            duration_min: args.duration_min,
+            include_intermittent: args.include_intermittent,
+        })
+    }
+
+    fn has_name_filter(&self) -> bool {
+        self.filter.is_some() || self.platform.is_some()
+    }
+
+    fn matches_name(&self, job: &Job) -> bool {
+        self.filter
+            .as_ref()
+            .is_none_or(|regex| regex.is_match(&job.job_type_name))
+            && self
+                .platform
+                .as_ref()
+                .is_none_or(|regex| regex.is_match(&job.platform))
+    }
+
+    fn matches(&self, job: &Job) -> bool {
+        self.matches_name(job)
+            && self
+                .duration_min
+                .is_none_or(|min| job.duration.is_some_and(|d| d >= min))
+            && (self.include_intermittent || job.failure_classification_id != Some(4))
+    }
+}
+
+fn matches_result(job: &Job, match_filter: &MatchFilter) -> bool {
+    match match_filter {
+        MatchFilter::Failure => job.result == "testfailed" || job.result == "busted",
+        MatchFilter::Success => job.result == "success",
+        MatchFilter::All => true,
+    }
+}
+
+fn describe_matched_jobs(matched: &[&Job], selector: &JobSelector) -> String {
+    if matched.is_empty() {
+        return "filter matched no jobs on this push".to_string();
+    }
+    let mut counts: HashMap<&str, usize> = HashMap::new();
+    let mut hidden_intermittent = 0;
+    for job in matched {
+        if selector.matches(job) {
+            *counts.entry(job.result.as_str()).or_default() += 1;
+        } else if job.failure_classification_id == Some(4) {
+            hidden_intermittent += 1;
+        }
+    }
+    let mut parts: Vec<_> = counts.into_iter().collect();
+    parts.sort_by_key(|(result, count)| (Reverse(*count), *result));
+    let mut summary: Vec<String> = parts
+        .into_iter()
+        .map(|(result, count)| format!("{} {}", count, result))
+        .collect();
+    if hidden_intermittent > 0 {
+        summary.push(format!(
+            "{} intermittent (hidden; --include-intermittent)",
+            hidden_intermittent
+        ));
+    }
+    format!(
+        "filter matched {} job{}: {}",
+        matched.len(),
+        if matched.len() == 1 { "" } else { "s" },
+        summary.join(", ")
+    )
+}
+
 fn filter_push_jobs(
     push_jobs: &[PushJobs],
-    args: &Args,
+    selector: &JobSelector,
     match_filter: Option<MatchFilter>,
-) -> Result<Vec<PushJobs>> {
-    let platform_regex = args
-        .platform
-        .as_ref()
-        .map(|pattern| Regex::new(pattern))
-        .transpose()?;
-
-    let filtered = push_jobs
+) -> Vec<PushJobs> {
+    push_jobs
         .iter()
         .map(|push_jobs| {
             let jobs = push_jobs
                 .jobs
                 .iter()
                 .filter(|job| {
-                    if let Some(match_filter) = &match_filter {
-                        match match_filter {
-                            MatchFilter::Failure => {
-                                if job.result != "testfailed" && job.result != "busted" {
-                                    return false;
-                                }
-                            }
-                            MatchFilter::Success => {
-                                if job.result != "success" {
-                                    return false;
-                                }
-                            }
-                            MatchFilter::All => {}
-                        }
-                    }
-
-                    if let Some(filter_pattern) = &args.filter {
-                        if !job.job_type_name.contains(filter_pattern) {
-                            return false;
-                        }
-                    }
-
-                    if let Some(platform_regex) = &platform_regex {
-                        if !platform_regex.is_match(&job.platform) {
-                            return false;
-                        }
-                    }
-
-                    if let Some(min_duration) = args.duration_min {
-                        if job.duration.is_none_or(|duration| duration < min_duration) {
-                            return false;
-                        }
-                    }
-
-                    args.include_intermittent || job.failure_classification_id != Some(4)
+                    match_filter
+                        .as_ref()
+                        .is_none_or(|match_filter| matches_result(job, match_filter))
+                        && selector.matches(job)
                 })
                 .cloned()
                 .collect();
@@ -205,9 +250,7 @@ fn filter_push_jobs(
                 jobs,
             }
         })
-        .collect();
-
-    Ok(filtered)
+        .collect()
 }
 
 async fn fetch_observations_for_jobs(
@@ -295,9 +338,10 @@ async fn run_range_mode(client: Client, repo: String, args: &Args, pb: ProgressB
     pb.finish_with_message("Fetched range jobs");
 
     let client = Arc::new(client);
+    let selector = JobSelector::from_args(args)?;
 
     if args.suspects {
-        let filtered_push_jobs = filter_push_jobs(&push_jobs, args, None)?;
+        let filtered_push_jobs = filter_push_jobs(&push_jobs, &selector, None);
         let failed_jobs = failed_jobs_from_pushes(&filtered_push_jobs);
         let observations =
             fetch_observations_for_jobs(client, &repo, failed_jobs, "Fetching failed job details")
@@ -311,7 +355,7 @@ async fn run_range_mode(client: Client, repo: String, args: &Args, pb: ProgressB
         }
     } else {
         let filtered_push_jobs =
-            filter_push_jobs(&push_jobs, args, Some(args.match_filter.clone()))?;
+            filter_push_jobs(&push_jobs, &selector, Some(args.match_filter.clone()));
         let jobs = all_jobs_from_pushes(&filtered_push_jobs);
         if jobs.is_empty() {
             println!("No jobs found matching the specified criteria");
@@ -441,6 +485,7 @@ async fn run() -> Result<()> {
     if args.use_cache {
         let cache_dir = args
             .cache_dir
+            .as_ref()
             .ok_or_else(|| anyhow::anyhow!("--use-cache requires --cache-dir to be specified"))?;
         let cache_path = PathBuf::from(&cache_dir);
 
@@ -457,36 +502,13 @@ async fn run() -> Result<()> {
         );
         println!("Cached jobs: {}", metadata.jobs.len());
 
-        let mut filtered_jobs = metadata.jobs.clone();
-
-        filtered_jobs = match args.match_filter {
-            MatchFilter::Failure => filtered_jobs
-                .into_iter()
-                .filter(|job| job.result == "testfailed" || job.result == "busted")
-                .collect(),
-            MatchFilter::Success => filtered_jobs
-                .into_iter()
-                .filter(|job| job.result == "success")
-                .collect(),
-            MatchFilter::All => filtered_jobs,
-        };
-
-        if let Some(filter_pattern) = &args.filter {
-            filtered_jobs.retain(|job| job.job_type_name.contains(filter_pattern));
-        }
-
-        if let Some(platform_pattern) = &args.platform {
-            let platform_regex = Regex::new(platform_pattern)?;
-            filtered_jobs.retain(|job| platform_regex.is_match(&job.platform));
-        }
-
-        if let Some(min_duration) = args.duration_min {
-            filtered_jobs.retain(|job| job.duration.is_some_and(|d| d >= min_duration));
-        }
-
-        if !args.include_intermittent {
-            filtered_jobs.retain(|job| job.failure_classification_id != Some(4));
-        }
+        let selector = JobSelector::from_args(&args)?;
+        let filtered_jobs: Vec<Job> = metadata
+            .jobs
+            .iter()
+            .filter(|job| matches_result(job, &args.match_filter) && selector.matches(job))
+            .cloned()
+            .collect();
 
         println!("Jobs matching filter: {}", filtered_jobs.len());
 
@@ -510,8 +532,12 @@ async fn run() -> Result<()> {
                 println!("{}", summary);
             }
         } else if args.json {
-            let json_output =
-                format_json_output(&metadata.revision, metadata.push_id, &jobs_with_logs)?;
+            let json_output = format_json_output(
+                &metadata.revision,
+                metadata.push_id,
+                jobs_with_logs.len(),
+                &jobs_with_logs,
+            )?;
             println!("{}", json_output);
         } else {
             let summary = format_markdown_summary(
@@ -551,6 +577,8 @@ async fn run() -> Result<()> {
     if has_range_request(&args) {
         return run_range_mode(client, repo, &args, pb).await;
     }
+
+    let selector = JobSelector::from_args(&args)?;
 
     let input = args.input.as_ref().unwrap();
     let (revision, push_ids) = if let Some(lando_commit_id) = extract_lando_commit_id(input) {
@@ -694,33 +722,15 @@ async fn run() -> Result<()> {
         pb.set_message("Fetching jobs for comparison revision");
         let compare_jobs = fetch_jobs(&client, compare_push_id).await?;
 
-        let base_failed: Vec<_> = base_jobs
+        let base_filtered: Vec<_> = base_jobs
             .into_iter()
-            .filter(|job| job.result == "testfailed" || job.result == "busted")
+            .filter(|job| matches_result(job, &MatchFilter::Failure) && selector.matches(job))
             .collect();
 
-        let compare_failed: Vec<_> = compare_jobs
+        let compare_filtered: Vec<_> = compare_jobs
             .into_iter()
-            .filter(|job| job.result == "testfailed" || job.result == "busted")
+            .filter(|job| matches_result(job, &MatchFilter::Failure) && selector.matches(job))
             .collect();
-
-        let base_filtered: Vec<_> = if args.include_intermittent {
-            base_failed
-        } else {
-            base_failed
-                .into_iter()
-                .filter(|job| job.failure_classification_id != Some(4))
-                .collect()
-        };
-
-        let compare_filtered: Vec<_> = if args.include_intermittent {
-            compare_failed
-        } else {
-            compare_failed
-                .into_iter()
-                .filter(|job| job.failure_classification_id != Some(4))
-                .collect()
-        };
 
         pb.set_message("Fetching error details for base revision");
         let client_arc = Arc::new(client);
@@ -887,38 +897,29 @@ async fn run() -> Result<()> {
         .map(|job| job.platform.clone())
         .collect();
 
-    let mut filtered_jobs: Vec<_> = match effective_match_filter {
-        MatchFilter::Failure => all_jobs
-            .into_iter()
-            .filter(|job| job.result == "testfailed" || job.result == "busted")
-            .collect(),
-        MatchFilter::Success => all_jobs
-            .into_iter()
-            .filter(|job| job.result == "success")
-            .collect(),
-        MatchFilter::All => all_jobs,
-    };
+    let name_matched: Vec<&Job> = all_jobs
+        .iter()
+        .filter(|job| selector.matches_name(job))
+        .collect();
+    let matched_jobs = name_matched.len();
+    let filtered_summary = describe_matched_jobs(&name_matched, &selector);
 
-    if let Some(filter_pattern) = &args.filter {
-        filtered_jobs.retain(|job| job.job_type_name.contains(filter_pattern));
-    }
-
-    if let Some(platform_pattern) = &args.platform {
-        let platform_regex = Regex::new(platform_pattern)?;
-        filtered_jobs.retain(|job| platform_regex.is_match(&job.platform));
-    }
-
-    if let Some(min_duration) = args.duration_min {
-        filtered_jobs.retain(|job| job.duration.is_some_and(|d| d >= min_duration));
-    }
-
-    if !args.include_intermittent {
-        filtered_jobs.retain(|job| job.failure_classification_id != Some(4));
-    }
+    let filtered_jobs: Vec<Job> = all_jobs
+        .iter()
+        .filter(|job| matches_result(job, &effective_match_filter) && selector.matches(job))
+        .cloned()
+        .collect();
 
     if filtered_jobs.is_empty() {
         pb.finish_with_message("No jobs found matching criteria");
-        if matches!(effective_match_filter, MatchFilter::Failure) && success_count > 0 {
+        if args.json {
+            println!(
+                "{}",
+                format_json_output(&revision, push_id, matched_jobs, &[])?
+            );
+        } else if selector.has_name_filter() {
+            println!("{}", filtered_summary);
+        } else if matches!(effective_match_filter, MatchFilter::Failure) && success_count > 0 {
             println!(
                 "{} passing job{} across {} platform{}, no failures found",
                 success_count,
@@ -1053,7 +1054,8 @@ async fn run() -> Result<()> {
                 println!("{}", summary);
             }
         } else if args.json {
-            let json_output = format_json_output(&revision, push_id, &jobs_with_logs)?;
+            let json_output =
+                format_json_output(&revision, push_id, matched_jobs, &jobs_with_logs)?;
             println!("{}", json_output);
         } else {
             let summary = format_markdown_summary(
@@ -1248,7 +1250,8 @@ async fn run() -> Result<()> {
                 println!("{}", summary);
             }
         } else if args.json {
-            let json_output = format_json_output(&revision, push_id, &jobs_with_logs)?;
+            let json_output =
+                format_json_output(&revision, push_id, matched_jobs, &jobs_with_logs)?;
             println!("{}", json_output);
         } else {
             let summary = format_markdown_summary(
@@ -1265,4 +1268,66 @@ async fn run() -> Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn job(name: &str, platform: &str, result: &str, classification: Option<u64>) -> Job {
+        Job {
+            id: 1,
+            job_type_name: name.to_string(),
+            job_type_symbol: String::new(),
+            platform: platform.to_string(),
+            platform_option: String::new(),
+            result: result.to_string(),
+            state: "completed".to_string(),
+            failure_classification_id: classification,
+            failure_classification: None,
+            duration: None,
+            task_id: None,
+        }
+    }
+
+    fn selector(filter: Option<&str>, platform: Option<&str>) -> JobSelector {
+        JobSelector {
+            filter: filter.map(|f| Regex::new(f).unwrap()),
+            platform: platform.map(|p| Regex::new(p).unwrap()),
+            duration_min: None,
+            include_intermittent: false,
+        }
+    }
+
+    #[test]
+    fn filter_is_a_regex() {
+        let selector = selector(Some("xpcshell|mochitest-plain"), None);
+        assert!(selector.matches_name(&job("test-linux/opt-xpcshell", "linux", "success", None)));
+        assert!(selector.matches_name(&job(
+            "test-linux/opt-mochitest-plain-1",
+            "linux",
+            "success",
+            None
+        )));
+        assert!(!selector.matches_name(&job("test-linux/opt-reftest", "linux", "success", None)));
+    }
+
+    #[test]
+    fn matched_jobs_summary_counts_results() {
+        let selector = selector(Some("xpcshell"), None);
+        let jobs = [
+            job("a-xpcshell", "linux", "success", Some(1)),
+            job("b-xpcshell", "linux", "success", Some(1)),
+            job("c-xpcshell", "linux", "testfailed", Some(4)),
+        ];
+        let matched: Vec<&Job> = jobs.iter().collect();
+        assert_eq!(
+            describe_matched_jobs(&matched, &selector),
+            "filter matched 3 jobs: 2 success, 1 intermittent (hidden; --include-intermittent)"
+        );
+        assert_eq!(
+            describe_matched_jobs(&[], &selector),
+            "filter matched no jobs on this push"
+        );
+    }
 }
