@@ -625,6 +625,85 @@ pub fn format_range_suspects_markdown(result: &RangeAnalysisResult) -> String {
     output
 }
 
+pub fn format_group_history_markdown(history: &GroupHistory) -> String {
+    let mut output = String::new();
+
+    output.push_str(&format!("{}\n\n", "Manifest History".bold().underline()));
+    output.push_str(&format!(
+        "{} {}\n",
+        "Manifest:".cyan().bold(),
+        history.manifest.yellow()
+    ));
+    output.push_str(&format!(
+        "{} {} (newest first, times UTC; fail>=ok counts as failing)\n",
+        "Pushes:".cyan().bold(),
+        history.pushes.len().to_string().yellow()
+    ));
+    output.push_str(&format!(
+        "{} {}\n",
+        "First failed:".cyan().bold(),
+        history
+            .first_failed
+            .as_ref()
+            .map_or("none in window".green().to_string(), |p| {
+                format_history_push_ref(p).red().to_string()
+            })
+    ));
+    output.push_str(&format!(
+        "{} {}\n",
+        "Last passed:".cyan().bold(),
+        history
+            .last_passed
+            .as_ref()
+            .map_or("not observed in window".yellow().to_string(), |p| {
+                format_history_push_ref(p).green().to_string()
+            })
+    ));
+    if history.predates_window {
+        output.push_str(&format!(
+            "{}\n",
+            "failure predates window (oldest push with a result is already failing); widen --lookback"
+                .yellow()
+        ));
+    }
+    output.push('\n');
+
+    for push in &history.pushes {
+        let counts = match push.state {
+            GroupState::NotRun => "not-run".dimmed().to_string(),
+            GroupState::Pass => format!("ok={} fail={}", push.ok, push.fail)
+                .green()
+                .to_string(),
+            GroupState::Mixed => format!("ok={} fail={}  mixed", push.ok, push.fail)
+                .yellow()
+                .to_string(),
+            GroupState::Fail => format!("ok={} fail={}", push.ok, push.fail)
+                .red()
+                .to_string(),
+        };
+        output.push_str(&format!(
+            "push {}  {}  {}  {}\n",
+            push.push_id,
+            short_revision(&push.revision),
+            format_utc_minutes(push.timestamp).dimmed(),
+            counts
+        ));
+    }
+
+    output
+}
+
+fn format_history_push_ref(push: &GroupHistoryPush) -> String {
+    format!(
+        "push {} {} {} (ok={} fail={})",
+        push.push_id,
+        short_revision(&push.revision),
+        format_utc_minutes(push.timestamp),
+        push.ok,
+        push.fail
+    )
+}
+
 fn short_revision(revision: &str) -> &str {
     &revision[..std::cmp::min(12, revision.len())]
 }

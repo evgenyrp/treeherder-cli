@@ -251,6 +251,34 @@ pub struct SuspectWindow {
     pub confidence: SuspectConfidence,
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub enum GroupState {
+    Pass,
+    Mixed,
+    Fail,
+    NotRun,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct GroupHistoryPush {
+    pub push_id: u64,
+    pub revision: String,
+    pub timestamp: u64,
+    pub ok: usize,
+    pub fail: usize,
+    pub state: GroupState,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct GroupHistory {
+    pub manifest: String,
+    pub pushes: Vec<GroupHistoryPush>,
+    pub first_failed: Option<GroupHistoryPush>,
+    pub last_passed: Option<GroupHistoryPush>,
+    pub predates_window: bool,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RangeAnalysisResult {
     pub repo: String,
