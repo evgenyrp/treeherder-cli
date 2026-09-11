@@ -481,12 +481,13 @@ pub async fn fetch_error_summary(client: &Client, log_url: &str) -> Result<Vec<E
         let mut errors = Vec::new();
         for line in response.lines() {
             if let Ok(error_line) = serde_json::from_str::<ErrorLine>(line) {
-                if (error_line.action == "test_result"
+                if ((error_line.action == "test_result"
                     && error_line
                         .status
                         .as_ref()
                         .is_some_and(|s| !matches!(s.as_str(), "PASS" | "OK")))
-                    || error_line.signature.is_some()
+                    || error_line.signature.is_some())
+                    && !is_harness_noise(&error_line)
                 {
                     errors.push(error_line);
                 }
@@ -496,6 +497,18 @@ pub async fn fetch_error_summary(client: &Client, log_url: &str) -> Result<Vec<E
     } else {
         Ok(vec![])
     }
+}
+
+fn is_harness_noise(error: &ErrorLine) -> bool {
+    if error.subtest.is_some() || error.signature.is_some() {
+        return false;
+    }
+    let Some(message) = error.message.as_deref() else {
+        return false;
+    };
+    message == "xpcshell return code: 0"
+        || message.starts_with("profile uploaded in ")
+        || (message.starts_with("Finished in ") && message.ends_with("ms"))
 }
 
 async fn fetch_text_following_taskcluster_redirect(client: &Client, url: &str) -> Result<String> {
