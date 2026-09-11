@@ -54,6 +54,7 @@ INPUT: revision hash|Treeherder URL|Lando commit ID (numeric or URL with ?landoC
 --download-artifacts download job artifacts|--artifact-pattern <regex>
 --perf show performance/resource data
 --similar-history <job-id> job history via similar_jobs API|--similar-count <N> (default 50)
+--test <regex> restrict --suspects to matching test names
 --duration-min <N> only jobs longer than N seconds
 --context <N> show N pushes before and after this push (for bisecting autoland failures)
 Ex: treeherder-cli a13b9fc22101|treeherder-cli 12345 --stream-failures|treeherder-cli a13b9fc22101 --json
@@ -69,6 +70,9 @@ fn has_range_request(args: &Args) -> bool {
 }
 
 fn validate_range_args(args: &Args) -> Result<()> {
+    if args.test.is_some() && !args.suspects {
+        anyhow::bail!("--test requires --suspects");
+    }
     if args.range.is_some() && (args.from.is_some() || args.to.is_some()) {
         anyhow::bail!("--range cannot be combined with --from or --to");
     }
@@ -346,7 +350,16 @@ async fn run_range_mode(client: Client, repo: String, args: &Args, pb: ProgressB
         let observations =
             fetch_observations_for_jobs(client, &repo, failed_jobs, "Fetching failed job details")
                 .await?;
-        let analysis = analyze_range_suspects(&repo, &filtered_push_jobs, &observations);
+        let mut analysis = analyze_range_suspects(&repo, &filtered_push_jobs, &observations);
+        if let Some(test_regex) = args.test.as_deref().map(Regex::new).transpose()? {
+            analysis.suspects.retain(|suspect| {
+                suspect
+                    .failure_key
+                    .test
+                    .as_deref()
+                    .is_some_and(|test| test_regex.is_match(test))
+            });
+        }
 
         if args.json {
             println!("{}", format_range_suspects_json(&analysis)?);

@@ -239,6 +239,18 @@ pub struct SuspectRange {
     pub confidence: SuspectConfidence,
 }
 
+/// Suspects that share the same window, collapsed for output.
+#[derive(Debug, Clone, Serialize)]
+pub struct SuspectWindow {
+    pub failure_keys: Vec<FailureKey>,
+    pub first_failed: PushRef,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_pass: Option<PushRef>,
+    pub predates_window: bool,
+    pub candidate_pushes: Vec<PushFailureObservation>,
+    pub confidence: SuspectConfidence,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RangeAnalysisResult {
     pub repo: String,
