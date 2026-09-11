@@ -51,10 +51,32 @@ pub struct Job {
     pub result: String,
     #[allow(dead_code)]
     pub state: String,
-    #[allow(dead_code)]
     pub failure_classification_id: Option<u64>,
     #[serde(default)]
+    pub failure_classification: Option<String>,
+    #[serde(default)]
     pub duration: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub task_id: Option<String>,
+}
+
+const FAILURE_CLASSIFICATIONS: &[(u64, &str)] = &[
+    (1, "not classified"),
+    (2, "fixed by commit"),
+    (3, "expected fail"),
+    (4, "intermittent"),
+    (5, "infra"),
+    (6, "new failure not classified"),
+    (7, "autoclassified intermittent"),
+    (8, "intermittent needs bugid"),
+];
+
+pub fn failure_classification_name(id: u64) -> String {
+    FAILURE_CLASSIFICATIONS
+        .iter()
+        .find(|(known, _)| *known == id)
+        .map(|(_, name)| name.to_string())
+        .unwrap_or_else(|| format!("unknown ({})", id))
 }
 
 #[derive(Deserialize, Debug)]
@@ -306,6 +328,14 @@ pub struct SimilarJob {
     pub result: String,
     pub state: String,
     pub push_id: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub revision: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub push_timestamp: Option<u64>,
+    #[serde(default)]
+    pub failure_classification_id: Option<u64>,
+    #[serde(default)]
+    pub failure_classification: Option<String>,
     #[serde(default)]
     pub start_timestamp: Option<u64>,
     #[serde(default)]

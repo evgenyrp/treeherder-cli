@@ -1,5 +1,16 @@
 use crate::models::*;
+use crate::util::format_utc_minutes;
 use colored::Colorize;
+
+fn classification_suffix(job: &Job) -> String {
+    match job.failure_classification_id {
+        Some(1) | None => String::new(),
+        Some(_) => format!(
+            " [{}]",
+            job.failure_classification.as_deref().unwrap_or("unknown")
+        ),
+    }
+}
 
 fn strip_source_hash(s: &str) -> String {
     let chars: Vec<char> = s.chars().collect();
@@ -160,10 +171,11 @@ pub fn format_markdown_summary(
             String::new()
         };
         output.push_str(&format!(
-            "  {} {} ({}){}\n",
+            "  {} {} ({}){}{}\n",
             result_str,
             job.job_type_name,
             job.platform.dimmed(),
+            classification_suffix(job).yellow(),
             err_str.dimmed()
         ));
     }
@@ -500,10 +512,11 @@ pub fn format_range_markdown_summary(result: &RangeJobSummary) -> String {
                 String::new()
             };
             output.push_str(&format!(
-                "  {} {} ({}){}\n",
+                "  {} {} ({}){}{}\n",
                 result_str,
                 job.job_type_name,
                 job.platform.dimmed(),
+                classification_suffix(job).yellow(),
                 err_str.dimmed()
             ));
         }
@@ -726,11 +739,23 @@ pub fn format_similar_history_markdown(history: &SimilarJobHistory) -> String {
             "testfailed" | "busted" => job.result.red().to_string(),
             _ => job.result.yellow().to_string(),
         };
+        let classification = match job.failure_classification_id {
+            Some(1) | None => String::new(),
+            Some(_) => format!(
+                " [{}]",
+                job.failure_classification.as_deref().unwrap_or("unknown")
+            ),
+        };
         output.push_str(&format!(
-            "  push {} — {} ({})\n",
+            "  push {}  {}  {}  {} ({}){}\n",
             job.push_id,
+            job.revision.as_deref().map_or("?", short_revision),
+            job.push_timestamp
+                .map_or("?".to_string(), format_utc_minutes)
+                .dimmed(),
             result_str,
-            job.platform.dimmed()
+            job.platform.dimmed(),
+            classification.yellow()
         ));
     }
 

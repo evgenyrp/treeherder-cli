@@ -191,6 +191,50 @@ pub async fn fetch_push_window_ending_at(
     Ok(pushes)
 }
 
+pub async fn fetch_pushes_by_ids(client: &Client, repo: &str, ids: &[u64]) -> Result<Vec<PushRef>> {
+    if ids.is_empty() {
+        return Ok(vec![]);
+    }
+    let id_list = ids
+        .iter()
+        .map(|id| id.to_string())
+        .collect::<Vec<_>>()
+        .join(",");
+    let url = format!(
+        "https://treeherder.mozilla.org/api/project/{}/push/?count={}&id__in={}",
+        repo,
+        ids.len(),
+        id_list
+    );
+
+    let response: PushResponse = client.get(&url).send().await?.json().await?;
+    Ok(response.results.iter().map(PushRef::from).collect())
+}
+
+pub type GroupResults = HashMap<String, HashMap<String, bool>>;
+
+pub async fn fetch_group_results(
+    client: &Client,
+    repo: &str,
+    revision: &str,
+) -> Result<GroupResults> {
+    let url = format!(
+        "https://treeherder.mozilla.org/api/project/{}/push/group_results/?revision={}",
+        repo, revision
+    );
+
+    let text = client.get(&url).send().await?.text().await?;
+    serde_json::from_str(&text).map_err(|err| {
+        let preview: String = text.chars().take(120).collect();
+        anyhow::anyhow!(
+            "group_results for {} did not return task results ({}): {}",
+            revision,
+            err,
+            preview
+        )
+    })
+}
+
 pub async fn fetch_jobs_by_push(client: &Client, pushes: &[PushRef]) -> Result<Vec<PushJobs>> {
     let futures: Vec<_> = pushes
         .iter()
@@ -300,6 +344,9 @@ fn parse_jobs_page(response: JobsResponse) -> Vec<Job> {
 
             let failure_classification_id =
                 get_field("failure_classification_id").and_then(|v| v.as_u64());
+            let task_id = get_field("task_id")
+                .and_then(|v| v.as_str())
+                .map(|s| s.to_string());
 
             jobs.push(Job {
                 id,
@@ -310,7 +357,9 @@ fn parse_jobs_page(response: JobsResponse) -> Vec<Job> {
                 result,
                 state,
                 failure_classification_id,
+                failure_classification: failure_classification_id.map(failure_classification_name),
                 duration,
+                task_id,
             });
         }
     }
@@ -676,7 +725,25 @@ pub async fn fetch_similar_jobs(
         repo, job_id, count
     );
 
-    let response: SimilarJobsResponse = client.get(&url).send().await?.json().await?;
+    let mut response: SimilarJobsResponse = client.get(&url).send().await?.json().await?;
+
+    let mut push_ids: Vec<u64> = response.results.iter().map(|j| j.push_id).collect();
+    push_ids.sort_unstable();
+    push_ids.dedup();
+    let pushes: HashMap<u64, PushRef> = fetch_pushes_by_ids(client, repo, &push_ids)
+        .await?
+        .into_iter()
+        .map(|push| (push.id, push))
+        .collect();
+    for job in &mut response.results {
+        if let Some(push) = pushes.get(&job.push_id) {
+            job.revision = Some(push.revision.clone());
+            job.push_timestamp = Some(push.push_timestamp);
+        }
+        job.failure_classification = job
+            .failure_classification_id
+            .map(failure_classification_name);
+    }
 
     let job_type_name = response
         .results
