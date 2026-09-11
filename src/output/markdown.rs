@@ -203,6 +203,12 @@ pub fn format_markdown_summary(
         if let Some(log_dir) = &job_with_logs.log_dir {
             output.push_str(&format!("  logs: {}\n", log_dir.blue()));
         }
+        if fetch_logs && job.result == "success" {
+            output.push_str(&format!(
+                "  {}\n",
+                "live log skipped for a success job; only errorsummary was downloaded".dimmed()
+            ));
+        }
 
         if !errors.is_empty() {
             for error in errors {
