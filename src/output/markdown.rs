@@ -1,4 +1,5 @@
 use crate::models::*;
+use crate::range::group_suspects;
 use crate::util::format_utc_minutes;
 use colored::Colorize;
 
@@ -567,38 +568,45 @@ pub fn format_range_suspects_markdown(result: &RangeAnalysisResult) -> String {
         return output;
     }
 
+    let windows = group_suspects(&result.suspects);
     output.push_str(&format!(
-        "{} ({} failure{})\n\n",
+        "{} ({} failure{} in {} window{})\n\n",
         "Candidate Windows".red().bold(),
         result.suspects.len(),
-        if result.suspects.len() == 1 { "" } else { "s" }
+        if result.suspects.len() == 1 { "" } else { "s" },
+        windows.len(),
+        if windows.len() == 1 { "" } else { "s" }
     ));
 
-    for suspect in &result.suspects {
-        output.push_str(&format!(
-            "  {}\n",
-            format_failure_key(&suspect.failure_key).bold()
-        ));
+    for window in &windows {
+        for key in &window.failure_keys {
+            output.push_str(&format!("  {}\n", format_failure_key(key).bold()));
+        }
         output.push_str(&format!(
             "    first failed: {} (push {})\n",
-            short_revision(&suspect.first_failed.revision).red(),
-            suspect.first_failed.id
+            short_revision(&window.first_failed.revision).red(),
+            window.first_failed.id
         ));
-        if let Some(last_pass) = &suspect.last_pass {
+        if let Some(last_pass) = &window.last_pass {
             output.push_str(&format!(
                 "    last pass:    {} (push {})\n",
                 short_revision(&last_pass.revision).green(),
                 last_pass.id
             ));
         } else {
-            output.push_str(&format!("    last pass:    {}\n", "not observed".yellow()));
+            output.push_str(&format!(
+                "    last pass:    {}\n    {}\n",
+                "not observed".yellow(),
+                "failure predates window (oldest push in window already failing); widen --lookback or use --group-history"
+                    .yellow()
+            ));
         }
         output.push_str(&format!(
             "    confidence:   {}\n",
-            format_confidence(suspect.confidence)
+            format_confidence(window.confidence)
         ));
         output.push_str("    candidates:   ");
-        let candidate_text = suspect
+        let candidate_text = window
             .candidate_pushes
             .iter()
             .map(|entry| {

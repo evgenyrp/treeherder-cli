@@ -1,4 +1,5 @@
 use crate::models::*;
+use crate::range::group_suspects;
 use anyhow::Result;
 use serde::Serialize;
 
@@ -54,7 +55,12 @@ pub fn format_range_json(result: &RangeJobSummary) -> Result<String> {
 }
 
 pub fn format_range_suspects_json(result: &RangeAnalysisResult) -> Result<String> {
-    Ok(serde_json::to_string_pretty(result)?)
+    let output = serde_json::json!({
+        "repo": result.repo,
+        "pushes": result.pushes,
+        "windows": group_suspects(&result.suspects),
+    });
+    Ok(serde_json::to_string_pretty(&output)?)
 }
 
 pub fn format_perf_json(revision: &str, push_id: u64, perf_data: &[JobPerfData]) -> Result<String> {

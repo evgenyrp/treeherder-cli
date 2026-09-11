@@ -111,6 +111,11 @@ pub struct Args {
         help = "Infer likely candidate push windows for first observed failures in a range"
     )]
     pub suspects: bool,
+    #[arg(
+        long,
+        help = "Only report suspects whose test name matches this regex (requires --suspects)"
+    )]
+    pub test: Option<String>,
     #[arg(long, help = "Download job artifacts")]
     pub download_artifacts: bool,
     #[arg(

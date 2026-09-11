@@ -84,6 +84,39 @@ pub fn analyze_range_suspects(
     }
 }
 
+pub fn group_suspects(suspects: &[SuspectRange]) -> Vec<SuspectWindow> {
+    let mut windows: Vec<SuspectWindow> = Vec::new();
+    for suspect in suspects {
+        let candidates: Vec<_> = suspect
+            .candidate_pushes
+            .iter()
+            .map(|c| (c.push.id, c.state))
+            .collect();
+        let existing = windows.iter_mut().find(|window| {
+            window.first_failed.id == suspect.first_failed.id
+                && window.last_pass.as_ref().map(|p| p.id)
+                    == suspect.last_pass.as_ref().map(|p| p.id)
+                && window
+                    .candidate_pushes
+                    .iter()
+                    .map(|c| (c.push.id, c.state))
+                    .eq(candidates.iter().copied())
+        });
+        match existing {
+            Some(window) => window.failure_keys.push(suspect.failure_key.clone()),
+            None => windows.push(SuspectWindow {
+                failure_keys: vec![suspect.failure_key.clone()],
+                first_failed: suspect.first_failed.clone(),
+                last_pass: suspect.last_pass.clone(),
+                predates_window: suspect.last_pass.is_none(),
+                candidate_pushes: suspect.candidate_pushes.clone(),
+                confidence: suspect.confidence,
+            }),
+        }
+    }
+    windows
+}
+
 fn build_failure_key_index(
     observations: &[JobObservation],
 ) -> HashMap<(u64, u64), BTreeSet<FailureKey>> {
@@ -329,6 +362,27 @@ mod tests {
             fixture.expected.candidate_push_ids
         );
         assert_eq!(suspect.confidence, fixture.expected.confidence);
+    }
+
+    #[test]
+    fn groups_suspects_sharing_a_window() {
+        let fixture: LargeRangeFixture = serde_json::from_str(include_str!(
+            "../tests/fixtures/autoland_recent_failures_large.json"
+        ))
+        .unwrap();
+        let observations = materialize_observations(&fixture.pushes, &fixture.observations);
+        let analysis = analyze_range_suspects(&fixture.repo, &fixture.pushes, &observations);
+
+        let windows = group_suspects(&analysis.suspects);
+        assert!(windows.len() < analysis.suspects.len());
+        assert_eq!(
+            windows.iter().map(|w| w.failure_keys.len()).sum::<usize>(),
+            analysis.suspects.len()
+        );
+        assert!(windows
+            .iter()
+            .all(|w| w.predates_window == w.last_pass.is_none()));
+        assert!(windows.iter().any(|w| w.failure_keys.len() > 1));
     }
 
     #[test]
