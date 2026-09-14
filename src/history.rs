@@ -10,7 +10,10 @@ pub struct PushGroupResults {
 }
 
 /// Results older than the last pass needed before the history stops fetching.
-pub const SETTLED_RESULTS_AFTER_PASS: usize = 3;
+pub const SETTLED_RESULTS_AFTER_PASS: usize = 1;
+/// Pushes older than the last pass that settle the history even without a result,
+/// so a manifest scheduled on few pushes does not drag the scan across the window.
+pub const SETTLED_PUSHES_AFTER_PASS: usize = 10;
 
 pub fn build_group_history(
     manifest: &str,
@@ -72,11 +75,13 @@ pub fn is_settled<'a>(entries: impl IntoIterator<Item = &'a GroupHistoryPush>) -
     else {
         return false;
     };
-    sorted[pass_idx + 1..]
-        .iter()
-        .filter(|entry| entry.state != GroupState::NotRun)
-        .count()
-        >= SETTLED_RESULTS_AFTER_PASS
+    let older = &sorted[pass_idx + 1..];
+    older.len() >= SETTLED_PUSHES_AFTER_PASS
+        || older
+            .iter()
+            .filter(|entry| entry.state != GroupState::NotRun)
+            .count()
+            >= SETTLED_RESULTS_AFTER_PASS
 }
 
 pub fn summarize_push(manifest: &str, push: PushGroupResults) -> GroupHistoryPush {
@@ -262,6 +267,25 @@ mod tests {
         assert!(is_settled(
             &entries[..pass_idx + 1 + SETTLED_RESULTS_AFTER_PASS]
         ));
+        assert!(is_settled(&entries));
+    }
+
+    #[test]
+    fn settles_after_a_pass_and_enough_not_run_pushes() {
+        let entry = |push_id: u64, state| GroupHistoryPush {
+            push_id,
+            revision: format!("{push_id:x}"),
+            timestamp: push_id,
+            ok: 0,
+            fail: 0,
+            state,
+        };
+        let mut entries = vec![entry(100, GroupState::Fail), entry(99, GroupState::Pass)];
+        let not_run = SETTLED_PUSHES_AFTER_PASS as u64 - 1;
+        entries.extend((0..not_run).map(|i| entry(98 - i, GroupState::NotRun)));
+
+        assert!(!is_settled(&entries));
+        entries.push(entry(50, GroupState::NotRun));
         assert!(is_settled(&entries));
     }
 
