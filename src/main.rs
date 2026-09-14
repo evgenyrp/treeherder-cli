@@ -57,6 +57,7 @@ INPUT: revision hash|Treeherder URL|Lando commit ID (numeric or URL with ?landoC
 --perf show performance/resource data
 --similar-history <job-id> job history via similar_jobs API|--similar-count <N> (default 50)
 --group-history <manifest> pass/fail of a test manifest per push before INPUT|--lookback <N> (default 50, max 300)
+  fetches newest first and stops after the last pass; widen --lookback only on "failure predates window"
 --test <regex> restrict --suspects to matching test names
 --duration-min <N> only jobs longer than N seconds
 --context <N> show N pushes before and after this push (for bisecting autoland failures)
@@ -78,6 +79,7 @@ Ex: treeherder-cli f9baddcc4cdc --repo autoland --group-history docshell/test/un
 
 const MAX_GROUP_HISTORY_LOOKBACK: u64 = 300;
 const DEFAULT_GROUP_HISTORY_LOOKBACK: u64 = 50;
+const GROUP_HISTORY_CONCURRENCY: usize = 20;
 
 fn has_range_request(args: &Args) -> bool {
     args.group_history.is_none()
@@ -464,50 +466,64 @@ async fn run_group_history_mode(
         fetch_push_window_ending_at(&client, &repo, &end_push, lookback).await?
     };
 
-    let allowed_tasks: HashMap<u64, HashSet<String>> = if selector.has_name_filter() {
-        pb.set_message(format!("Fetching jobs for {} pushes", pushes.len()));
-        fetch_jobs_by_push(&client, &pushes)
-            .await?
-            .into_iter()
-            .map(|push_jobs| {
-                let tasks = push_jobs
-                    .jobs
-                    .iter()
-                    .filter(|job| selector.matches_name(job))
-                    .filter_map(|job| job.task_id.clone())
-                    .collect();
-                (push_jobs.push.id, tasks)
-            })
-            .collect()
-    } else {
-        HashMap::new()
-    };
+    let window_pushes = pushes.len();
+    let mut newest_first = pushes;
+    newest_first.sort_by_key(|push| Reverse(push.id));
 
-    pb.set_message(format!(
-        "Fetching group results for {} pushes",
-        pushes.len()
-    ));
     let client = Arc::new(client);
-    let results: Vec<Result<PushGroupResults>> = stream::iter(pushes)
-        .map(|push| {
+    let selector = Arc::new(selector);
+    let mut fetches = stream::iter(newest_first.into_iter().enumerate())
+        .map(|(index, push)| {
             let client = Arc::clone(&client);
             let repo = repo.clone();
-            let allowed = allowed_tasks.get(&push.id).cloned();
+            let selector = Arc::clone(&selector);
             async move {
+                let allowed_tasks = if selector.has_name_filter() {
+                    Some(
+                        fetch_jobs(&client, push.id)
+                            .await?
+                            .into_iter()
+                            .filter(|job| selector.matches_name(job))
+                            .filter_map(|job| job.task_id)
+                            .collect::<HashSet<_>>(),
+                    )
+                } else {
+                    None
+                };
                 let results = fetch_group_results(&client, &repo, &push.revision).await?;
-                Ok(PushGroupResults {
-                    push,
-                    results,
-                    allowed_tasks: allowed,
-                })
+                Ok::<_, anyhow::Error>((
+                    index,
+                    PushGroupResults {
+                        push,
+                        results,
+                        allowed_tasks,
+                    },
+                ))
             }
         })
-        .buffer_unordered(20)
-        .collect()
-        .await;
+        .buffer_unordered(GROUP_HISTORY_CONCURRENCY);
+
+    let mut slots: Vec<Option<GroupHistoryPush>> = vec![None; window_pushes];
+    let mut settled_prefix = 0;
+    while let Some(result) = fetches.next().await {
+        let (index, push) = result?;
+        slots[index] = Some(summarize_push(manifest, push));
+        while slots.get(settled_prefix).is_some_and(Option::is_some) {
+            settled_prefix += 1;
+        }
+        pb.set_message(format!(
+            "Fetched group results for {} of {} pushes",
+            settled_prefix, window_pushes
+        ));
+        if is_settled(slots[..settled_prefix].iter().flatten()) {
+            break;
+        }
+    }
+    drop(fetches);
     pb.finish_and_clear();
 
-    let history = build_group_history(manifest, results.into_iter().collect::<Result<Vec<_>>>()?);
+    let entries: Vec<GroupHistoryPush> = slots.drain(..settled_prefix).flatten().collect();
+    let history = build_group_history(manifest, entries, window_pushes);
 
     if args.json {
         println!("{}", format_group_history_json(&history)?);

@@ -9,11 +9,14 @@ pub struct PushGroupResults {
     pub allowed_tasks: Option<HashSet<String>>,
 }
 
-pub fn build_group_history(manifest: &str, pushes: Vec<PushGroupResults>) -> GroupHistory {
-    let mut entries: Vec<GroupHistoryPush> = pushes
-        .into_iter()
-        .map(|push| summarize_push(manifest, push))
-        .collect();
+/// Results older than the last pass needed before the history stops fetching.
+pub const SETTLED_RESULTS_AFTER_PASS: usize = 3;
+
+pub fn build_group_history(
+    manifest: &str,
+    mut entries: Vec<GroupHistoryPush>,
+    window_pushes: usize,
+) -> GroupHistory {
     entries.sort_by_key(|entry| std::cmp::Reverse(entry.push_id));
 
     let newest_fail = entries
@@ -45,6 +48,7 @@ pub fn build_group_history(manifest: &str, pushes: Vec<PushGroupResults>) -> Gro
 
     GroupHistory {
         manifest: manifest.to_string(),
+        window_pushes,
         last_passed: last_passed_idx.map(|idx| entries[idx].clone()),
         first_failed,
         predates_window,
@@ -52,7 +56,30 @@ pub fn build_group_history(manifest: &str, pushes: Vec<PushGroupResults>) -> Gro
     }
 }
 
-fn summarize_push(manifest: &str, push: PushGroupResults) -> GroupHistoryPush {
+/// True once the newest-first entries contain a pass older than the newest failure
+/// followed by enough further results that older pushes cannot change the answer.
+pub fn is_settled<'a>(entries: impl IntoIterator<Item = &'a GroupHistoryPush>) -> bool {
+    let mut sorted: Vec<_> = entries.into_iter().collect();
+    sorted.sort_by_key(|entry| std::cmp::Reverse(entry.push_id));
+    let newest_fail = sorted
+        .iter()
+        .position(|entry| entry.state == GroupState::Fail)
+        .unwrap_or(0);
+    let Some(pass_idx) = sorted[newest_fail..]
+        .iter()
+        .position(|entry| entry.state.counts_as_pass())
+        .map(|offset| newest_fail + offset)
+    else {
+        return false;
+    };
+    sorted[pass_idx + 1..]
+        .iter()
+        .filter(|entry| entry.state != GroupState::NotRun)
+        .count()
+        >= SETTLED_RESULTS_AFTER_PASS
+}
+
+pub fn summarize_push(manifest: &str, push: PushGroupResults) -> GroupHistoryPush {
     let (mut ok, mut fail) = (0, 0);
     for (task_id, groups) in &push.results {
         if push
@@ -135,7 +162,7 @@ mod tests {
         .unwrap()
     }
 
-    fn inputs(fixture: &Fixture, filter: Option<&Regex>) -> Vec<PushGroupResults> {
+    fn inputs(fixture: &Fixture, filter: Option<&Regex>) -> Vec<GroupHistoryPush> {
         fixture
             .pushes
             .iter()
@@ -150,13 +177,15 @@ mod tests {
                         .collect()
                 }),
             })
+            .map(|push| summarize_push(&fixture.manifest, push))
             .collect()
     }
 
     #[test]
     fn replays_manifest_history_fixture() {
         let fixture = load_fixture();
-        let history = build_group_history(&fixture.manifest, inputs(&fixture, None));
+        let entries = inputs(&fixture, None);
+        let history = build_group_history(&fixture.manifest, entries.clone(), entries.len());
 
         let ids: Vec<_> = history.pushes.iter().map(|p| p.push_id).collect();
         let mut sorted = ids.clone();
@@ -182,7 +211,8 @@ mod tests {
     fn joins_tasks_to_filtered_jobs() {
         let fixture = load_fixture();
         let regex = Regex::new(&fixture.expected.filtered.filter).unwrap();
-        let history = build_group_history(&fixture.manifest, inputs(&fixture, Some(&regex)));
+        let entries = inputs(&fixture, Some(&regex));
+        let history = build_group_history(&fixture.manifest, entries.clone(), entries.len());
 
         assert_eq!(
             history.last_passed.as_ref().map(|p| p.push_id),
@@ -201,16 +231,38 @@ mod tests {
         let fixture = load_fixture();
         let failing_only: Vec<_> = inputs(&fixture, None)
             .into_iter()
-            .filter(|push| push.push.id >= fixture.expected.first_failed_push_id)
+            .filter(|push| push.push_id >= fixture.expected.first_failed_push_id)
             .collect();
-        let history = build_group_history(&fixture.manifest, failing_only);
+        let history = build_group_history(&fixture.manifest, failing_only.clone(), 20);
 
+        assert!(!is_settled(&failing_only));
+        assert_eq!(history.window_pushes, 20);
         assert!(history.predates_window);
         assert!(history.last_passed.is_none());
         assert_eq!(
             history.first_failed.map(|p| p.push_id),
             Some(fixture.expected.first_failed_push_id)
         );
+    }
+
+    #[test]
+    fn settles_after_a_pass_and_older_results() {
+        let fixture = load_fixture();
+        let mut entries = inputs(&fixture, None);
+        entries.sort_by_key(|entry| std::cmp::Reverse(entry.push_id));
+        let pass_idx = entries
+            .iter()
+            .position(|entry| entry.push_id == fixture.expected.last_passed_push_id)
+            .unwrap();
+
+        assert!(!is_settled(&entries[..pass_idx + 1]));
+        assert!(!is_settled(
+            &entries[..pass_idx + SETTLED_RESULTS_AFTER_PASS]
+        ));
+        assert!(is_settled(
+            &entries[..pass_idx + 1 + SETTLED_RESULTS_AFTER_PASS]
+        ));
+        assert!(is_settled(&entries));
     }
 
     #[test]

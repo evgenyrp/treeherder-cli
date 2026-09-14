@@ -94,7 +94,9 @@ per push, newest first, with the number of tasks where the manifest passed or
 failed. A push counts as failing when at least as many tasks fail as pass; pass
 `--filter`/`--platform` to pin the count to one job. The header names the first
 failing and last passing push, and flags a failure that predates the window.
-`--lookback` defaults to 50 and is capped at 300.
+Pushes are fetched newest first and fetching stops once a pass and three older pushes
+with results are seen, so a wide `--lookback` (default 50, max 300) only costs time
+when the failure is old.
 
 ## Real Autoland fixtures
 

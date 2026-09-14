@@ -273,6 +273,7 @@ pub struct GroupHistoryPush {
 #[derive(Debug, Clone, Serialize)]
 pub struct GroupHistory {
     pub manifest: String,
+    pub window_pushes: usize,
     pub pushes: Vec<GroupHistoryPush>,
     pub first_failed: Option<GroupHistoryPush>,
     pub last_passed: Option<GroupHistoryPush>,
