@@ -634,10 +634,19 @@ pub fn format_group_history_markdown(history: &GroupHistory) -> String {
         "Manifest:".cyan().bold(),
         history.manifest.yellow()
     ));
+    let fetched = if history.pushes.len() < history.window_pushes {
+        format!(
+            "{} fetched of {} in window, stopped after the last pass",
+            history.pushes.len(),
+            history.window_pushes
+        )
+    } else {
+        history.pushes.len().to_string()
+    };
     output.push_str(&format!(
         "{} {} (newest first, times UTC; fail>=ok counts as failing)\n",
         "Pushes:".cyan().bold(),
-        history.pushes.len().to_string().yellow()
+        fetched.yellow()
     ));
     output.push_str(&format!(
         "{} {}\n",
