@@ -238,10 +238,12 @@ pub async fn fetch_group_results(
 pub async fn fetch_jobs_by_push(client: &Client, pushes: &[PushRef]) -> Result<Vec<PushJobs>> {
     let futures: Vec<_> = pushes
         .iter()
-        .cloned()
         .map(|push| async move {
             let jobs = fetch_jobs(client, push.id).await?;
-            Ok::<_, anyhow::Error>(PushJobs { push, jobs })
+            Ok::<_, anyhow::Error>(PushJobs {
+                push: push.clone(),
+                jobs,
+            })
         })
         .collect();
     let results = futures::future::join_all(futures).await;
